@@ -34,3 +34,57 @@ Manager can:
 | JAccount Integration | 2021.07.12 |        |
 
 ## Database Design
+### User
+| Field       | Type        |
+| :---:       | :---:       |
+| id          | (Default)   |
+| username    | (Default)   |
+| password    | (Default)   |
+| jaccount_id | BIGINT      |
+
+### Classroom
+Classroom is the same as `class` but avoid duplication of keywords in python.
+
+| Field    | Type         |
+| :---:    | :---:        |
+| id       | (Default)    |
+| name     | VARCHAR(256) |
+| class_id | VARCHAR(20)  |
+| owner(*) | user_id      |
+
+**Note**: (`*`) means foreign key.
+
+### Event
+| Field           | Type         |
+| :---:           | :---:        |
+| id              | (Default)    |
+| name            | VARCHAR(256) |
+| expiration_date | datetime     |
+| class_id(*)     | class_id     |
+| booklist_id(*)  | booklist_id  |
+
+### Invoice
+| Field       | Type         |
+| :---:       | :---:        |
+| id          | (Default)    |
+| user_id(*)  | user_id      |
+| event_id(*) | event_id     |
+| total       | DOUBLE       |
+| status      | INT          |
+| detail      | TEXT         | 
+
+The value of status means:
+- 0 : unpaid
+- 1 : paid
+
+`detail` is a json includes the count of books that the user want to buy.
+It looks like this:
+```json
+[{
+  "id": 1,
+  "count": 100
+}]
+```
+
+**Note**: We should make sure that each book in `detail` field is in the book_list
+of the `Event`
